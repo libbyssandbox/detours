@@ -32,12 +32,25 @@ do
 		FunctionLocation[FunctionName] = self:SetupReplacementFenv(OriginalFunction, replacement)
 	end
 
+	function RestoreGeneric(self, location)
+		local OriginalFunction = self.m_Backups.m_Generic[location]
+
+		if not isfunction(OriginalFunction) then
+			FormatError("Missing restore for function '%s'", location)
+		end
+
+		local _, FunctionName, FunctionLocation = string.ToIndex(location)
+		FunctionLocation[FunctionName] = OriginalFunction
+
+		self.m_Backups.m_Generic[location] = nil
+	end
+
 	function OnEnabled(self)
-		include("libbys_detours/generic.lua")
+		include("libbys_detours/generic/create.lua")
 	end
 
 	function OnDisabled(self)
-
+		include("libbys_detours/generic/destroy.lua")
 	end
 end
 libbys:FinishModule()
