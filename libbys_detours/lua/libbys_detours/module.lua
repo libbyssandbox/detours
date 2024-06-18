@@ -4,7 +4,23 @@ do
 		self.m_ReplacementFev = { __index = _G }
 
 		self.m_Backups = {}
-		self.m_Backups.m_Generic = {}
+		self.m_Backups.m_Originals = {}
+		self.m_Backups.m_Replacements = {}
+	end
+
+	function OnConfigValueChanged(self, key, old, new)
+		if string.find(key, ".") then
+			-- Assume it's an index
+			local _, FunctionName, FunctionLocation = string.ToIndex(key)
+
+			if new then
+				FunctionLocation[FunctionName] = self.m_Backups.m_Replacements[key]
+			else
+				FunctionLocation[FunctionName] = self.m_Backups.m_Originals[key]
+			end
+
+			return
+		end
 	end
 
 	function SetupReplacementFenv(self, original, replacement)
@@ -21,28 +37,20 @@ do
 			FormatError("Can't find function for detouring '%s'", location)
 		end
 
-		if self.m_Backups.m_Generic[location] then
-			FormatErrorNoHalt("Detour for function '%s' already exists, using old original", location)
-
-			OriginalFunction = self.m_Backups.m_Generic[location]
+		if self.m_Backups.m_Originals[location] then
+			-- Use the old original
+			OriginalFunction = self.m_Backups.m_Originals[location]
 		else
-			self.m_Backups.m_Generic[location] = OriginalFunction
+			self.m_Backups.m_Originals[location] = OriginalFunction
 		end
 
-		FunctionLocation[FunctionName] = self:SetupReplacementFenv(OriginalFunction, replacement)
+		self.m_Backups.m_Replacements[location] = self:SetupReplacementFenv(OriginalFunction, replacement)
+
+		self:SetConfigValue(location, true)
 	end
 
 	function RestoreGeneric(self, location)
-		local OriginalFunction = self.m_Backups.m_Generic[location]
-
-		if not isfunction(OriginalFunction) then
-			FormatError("Missing restore for function '%s'", location)
-		end
-
-		local _, FunctionName, FunctionLocation = string.ToIndex(location)
-		FunctionLocation[FunctionName] = OriginalFunction
-
-		self.m_Backups.m_Generic[location] = nil
+		self:SetConfigValue(location, false)
 	end
 
 	function OnEnabled(self)
