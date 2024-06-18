@@ -9,7 +9,7 @@ do
 	end
 
 	function OnConfigValueChanged(self, key, old, new)
-		if string.find(key, ".") then
+		if string.find(key, ".", 1, true) then
 			-- Assume it's an index
 			local _, FunctionName, FunctionLocation = string.ToIndex(key)
 
@@ -53,12 +53,26 @@ do
 		self:SetConfigValue(location, false)
 	end
 
+	function SetAllDetours(self, status)
+		for k, _ in next, self:GetConfig() do
+			if string.find(k, ".", 1, true) then
+				self:SetConfigValue(k, status)
+			end
+		end
+	end
+
 	function OnEnabled(self)
-		include("libbys_detours/generic/create.lua")
+		if not self:GetConfigValue("Loaded") then
+			include("libbys_detours/generic.lua")
+
+			self:SetConfigValue("Loaded", true)
+		else
+			self:SetAllDetours(true)
+		end
 	end
 
 	function OnDisabled(self)
-		include("libbys_detours/generic/destroy.lua")
+		self:SetAllDetours(false)
 	end
 end
 libbys:FinishModule()
