@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 libbys:StartModule("Detours")
 do
 	function SetupConfig(self)

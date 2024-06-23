@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 local Detours = libbys:FindModule("Detours")
 
 Detours:CreateGeneric("util.SHA256", function(str)
