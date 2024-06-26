@@ -23,6 +23,7 @@ local function Entity_OnlyOwnerPlayer(name)
 	end)
 end
 
+-- Prevent messing with other players
 Entity_OnlyOwnerPlayer("pos(e:)")
 Entity_OnlyOwnerPlayer("toWorld(e:v)")
 Entity_OnlyOwnerPlayer("toLocal(e:v)")
@@ -32,7 +33,6 @@ Entity_OnlyOwnerPlayer("bearing(e:v)")
 Entity_OnlyOwnerPlayer("elevation(e:v)")
 Entity_OnlyOwnerPlayer("heading(e:v)")
 Entity_OnlyOwnerPlayer("massCenter(e:)")
--- setMass
 Entity_OnlyOwnerPlayer("boxCenterW(e:)")
 Entity_OnlyOwnerPlayer("aabbWorldMin(e:)")
 Entity_OnlyOwnerPlayer("aabbWorldMax(e:)")
@@ -40,4 +40,16 @@ Entity_OnlyOwnerPlayer("aabbWorldSize(e:)")
 Entity_OnlyOwnerPlayer("attachmentPos(e:n)")
 Entity_OnlyOwnerPlayer("attachmentPos(e:s)")
 Entity_OnlyOwnerPlayer("nearestPoint(e:v)")
--- noCollideAll
+
+-- Prevent "ghost"
+Detours:CreateExpression2("noCollideAll(e:n)", function(ctx, args)
+	local entity = ContextValidateEntity(ctx, args[1])
+	if not entity then return end
+
+	if entity:IsPlayer() then
+		ctx:throw("You cannot set the collision group of a player!")
+		return
+	end
+
+	return _OriginalFunction_(ctx, args)
+end)
