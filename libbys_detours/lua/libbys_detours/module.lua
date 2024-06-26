@@ -43,7 +43,7 @@ do
 		local ReplacementData = self.m_Backups.m_Replacements[key]
 
 		if OriginalData and ReplacementData then
-			if key then
+			if new then
 				OriginalData.FunctionLocation[OriginalData.FunctionName] = ReplacementData.Function
 			else
 				OriginalData.FunctionLocation[OriginalData.FunctionName] = OriginalData.Function
