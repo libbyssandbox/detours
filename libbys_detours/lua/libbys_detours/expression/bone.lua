@@ -26,3 +26,10 @@ local function Bone_OnlyOwnerPlayer(name)
 end
 
 Bone_OnlyOwnerPlayer("pos(b:)")
+Bone_OnlyOwnerPlayer("velL(b:)")
+Bone_OnlyOwnerPlayer("toWorld(b:v)")
+Bone_OnlyOwnerPlayer("toLocal(b:v)")
+Bone_OnlyOwnerPlayer("bearing(b:v)")
+Bone_OnlyOwnerPlayer("elevation(b:v)")
+Bone_OnlyOwnerPlayer("heading(b:v)")
+Bone_OnlyOwnerPlayer("massCenter(b:)")
