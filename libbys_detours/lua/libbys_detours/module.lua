@@ -104,6 +104,7 @@ do
 
 		if SERVER then
 			include("libbys_detours/expression/bone.lua")
+			include("libbys_detours/expression/chat.lua")
 			include("libbys_detours/expression/entity.lua")
 		end
 	end
