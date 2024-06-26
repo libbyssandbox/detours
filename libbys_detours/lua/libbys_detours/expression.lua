@@ -20,3 +20,15 @@ Detours:CreateExpression2("pos(e:)", function(ctx, args)
 
 	return _OriginalFunction_(ctx, args)
 end)
+
+Detours:CreateExpression2("toWorld(e:v)", function(ctx, args)
+	local entity = ContextValidateEntity(ctx, args[1])
+	if not entity then return Vector(0, 0, 0) end
+
+	if entity:IsPlayer() and entity ~= ctx.player then
+		ctx:throw("You can't call :toWorld on other players!")
+		return Vector(0, 0, 0)
+	end
+
+	return _OriginalFunction_(ctx, args)
+end)
