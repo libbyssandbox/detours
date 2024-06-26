@@ -26,6 +26,7 @@ end
 -- Prevent messing with other players
 Entity_OnlyOwnerPlayer("pos(e:)")
 Entity_OnlyOwnerPlayer("velL(e:)")
+Entity_OnlyOwnerPlayer("velAtPoint(e:v)")
 Entity_OnlyOwnerPlayer("toWorld(e:v)")
 Entity_OnlyOwnerPlayer("toLocal(e:v)")
 Entity_OnlyOwnerPlayer("toWorldAxis(e:v)")
