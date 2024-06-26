@@ -9,26 +9,20 @@ local function ContextValidateEntity(ctx, entity)
 	return entity
 end
 
-Detours:CreateExpression2("pos(e:)", function(ctx, args)
-	local entity = ContextValidateEntity(ctx, args[1])
-	if not entity then return Vector(0, 0, 0) end
+local function Entity_OnlyOwnerPlayer(name)
+	Detours:CreateExpression2(name, function(ctx, args)
+		local entity = ContextValidateEntity(ctx, args[1])
+		if not entity then return Vector(0, 0, 0) end
 
-	if entity:IsPlayer() and entity ~= ctx.player then
-		ctx:throw("You can't call :pos on other players!")
-		return Vector(0, 0, 0)
-	end
+		if entity:IsPlayer() and entity ~= ctx.player then
+			ctx:throw(string.format("You can't call entity:%s on other players!", name))
+			return Vector(0, 0, 0)
+		end
 
-	return _OriginalFunction_(ctx, args)
-end)
+		return _OriginalFunction_(ctx, args)
+	end)
+end
 
-Detours:CreateExpression2("toWorld(e:v)", function(ctx, args)
-	local entity = ContextValidateEntity(ctx, args[1])
-	if not entity then return Vector(0, 0, 0) end
-
-	if entity:IsPlayer() and entity ~= ctx.player then
-		ctx:throw("You can't call :toWorld on other players!")
-		return Vector(0, 0, 0)
-	end
-
-	return _OriginalFunction_(ctx, args)
-end)
+Entity_OnlyOwnerPlayer("pos(e:)")
+Entity_OnlyOwnerPlayer("toWorld(e:v)")
+Entity_OnlyOwnerPlayer("toLocal(e:v)")
