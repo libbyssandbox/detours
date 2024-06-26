@@ -1,11 +1,17 @@
 local Detours = libbys:FindModule("Detours")
 
-Detours:CreateExpression2("pos(e:)", function(ctx, args)
-	local entity = args[1]
-
+local function ContextValidateEntity(entity, ctx)
 	if not IsValid(entity) then
-		return _OriginalFunction_(ctx, args)
+		ctx:throw("Invalid entity!")
+		return false
 	end
+
+	return entity
+end
+
+Detours:CreateExpression2("pos(e:)", function(ctx, args)
+	local entity = ContextValidateEntity(ctx, args[1])
+	if not entity then return Vector(0, 0, 0) end
 
 	if entity:IsPlayer() and entity ~= ctx.player then
 		ctx:throw("You can't call :pos on other players!")
