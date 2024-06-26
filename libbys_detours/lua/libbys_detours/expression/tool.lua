@@ -16,19 +16,15 @@ Detours:CreateFromKey(ExpressionTool, "Do_RightClick", function(tool)
 		return _OriginalFunction_(tool)
 	end
 
-	if IsValid(Chip) and Chip:GetClass() == "gmod_wire_expression2" then
-		if Chip.player == Owner then
-			return _OriginalFunction_(tool)
-		elseif WireLib.CanTool(Owner, Chip, "wire_expression2") then
-			tool:Download(Owner, Chip)
-			Owner:SetAnimation(PLAYER_ATTACK1)
+	if Chip.player == Owner then
+		return _OriginalFunction_(tool)
+	elseif WireLib.CanTool(Owner, Chip, "wire_expression2") then
+		tool:Download(Owner, Chip)
+		Owner:SetAnimation(PLAYER_ATTACK1)
 
-			-- Remove BetterChatPrint call
-			return
-		else
-			return _OriginalFunction_(tool)
-		end
+		-- Remove BetterChatPrint call
+		return
+	else
+		return _OriginalFunction_(tool)
 	end
-
-	return _OriginalFunction_(tool)
 end)
