@@ -83,6 +83,16 @@ do
 		self:CreateFromKey(FunctionLocation, FunctionName, replacement)
 	end
 
+	function CreateExpression2(self, name, replacement)
+		local FunctionData = wire_expression2_funcs[name]
+
+		if not istable(FunctionData) or not isfunction(FunctionData[3]) then
+			FormatError("Can't find Expression2 function for detouring '%s'", name)
+		end
+
+		self:CreateFromKey(FunctionData, 3, replacement)
+	end
+
 	function SetAllDetours(self, status)
 		for k, _ in next, self.m_Backups.m_Originals do
 			self:SetConfigValue(k, status)
