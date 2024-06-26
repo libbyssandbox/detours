@@ -103,6 +103,7 @@ do
 		include("libbys_detours/generic.lua")
 
 		if SERVER then
+			include("libbys_detours/expression/bone.lua")
 			include("libbys_detours/expression/entity.lua")
 		end
 	end
