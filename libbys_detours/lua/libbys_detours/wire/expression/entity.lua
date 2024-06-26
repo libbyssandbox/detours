@@ -1,14 +1,14 @@
 local Detours = libbys:FindModule("Detours")
 local Helpers = libbys:FindModule("DetourHelpers")
 
-local function Entity_OnlyOwnerPlayer(name)
+local function Entity_OnlyOwnerPlayer(name, default)
 	Detours:CreateExpression2(name, function(ctx, args)
 		local entity = Helpers:ContextValidObject(ctx, args[1], "Invalid entity!")
-		if not entity then return Vector(0, 0, 0) end
+		if not entity then return default * 1 end
 
 		if entity:IsPlayer() and entity ~= ctx.player then
 			ctx:throw(Format("You can't call entity:%s on other players!", name))
-			return Vector(0, 0, 0)
+			return default * 1
 		end
 
 		return _OriginalFunction_(ctx, args)
@@ -16,25 +16,25 @@ local function Entity_OnlyOwnerPlayer(name)
 end
 
 -- Prevent messing with other players
-Entity_OnlyOwnerPlayer("pos(e:)")
-Entity_OnlyOwnerPlayer("velL(e:)")
-Entity_OnlyOwnerPlayer("velAtPoint(e:v)")
-Entity_OnlyOwnerPlayer("toWorld(e:v)")
-Entity_OnlyOwnerPlayer("toLocal(e:v)")
-Entity_OnlyOwnerPlayer("toWorldAxis(e:v)")
-Entity_OnlyOwnerPlayer("toLocalAxis(e:v)")
-Entity_OnlyOwnerPlayer("bearing(e:v)")
-Entity_OnlyOwnerPlayer("elevation(e:v)")
-Entity_OnlyOwnerPlayer("heading(e:v)")
-Entity_OnlyOwnerPlayer("massCenter(e:)")
-Entity_OnlyOwnerPlayer("boxCenterW(e:)")
-Entity_OnlyOwnerPlayer("aabbWorldMin(e:)")
-Entity_OnlyOwnerPlayer("aabbWorldMax(e:)")
-Entity_OnlyOwnerPlayer("aabbWorldSize(e:)")
-Entity_OnlyOwnerPlayer("attachmentPos(e:n)")
-Entity_OnlyOwnerPlayer("attachmentPos(e:s)")
-Entity_OnlyOwnerPlayer("nearestPoint(e:v)")
-Entity_OnlyOwnerPlayer("shootPos(e:)") -- Technically belongs in player
+Entity_OnlyOwnerPlayer("pos(e:)", vector_origin)
+Entity_OnlyOwnerPlayer("velL(e:)", vector_origin)
+Entity_OnlyOwnerPlayer("velAtPoint(e:v)", vector_origin)
+Entity_OnlyOwnerPlayer("toWorld(e:v)", vector_origin)
+Entity_OnlyOwnerPlayer("toLocal(e:v)", vector_origin)
+Entity_OnlyOwnerPlayer("toWorldAxis(e:v)", vector_origin)
+Entity_OnlyOwnerPlayer("toLocalAxis(e:v)", vector_origin)
+Entity_OnlyOwnerPlayer("bearing(e:v)", 0)
+Entity_OnlyOwnerPlayer("elevation(e:v)", 0)
+Entity_OnlyOwnerPlayer("heading(e:v)", angle_zero)
+Entity_OnlyOwnerPlayer("massCenter(e:)", vector_origin)
+Entity_OnlyOwnerPlayer("boxCenterW(e:)", vector_origin)
+Entity_OnlyOwnerPlayer("aabbWorldMin(e:)", vector_origin)
+Entity_OnlyOwnerPlayer("aabbWorldMax(e:)", vector_origin)
+Entity_OnlyOwnerPlayer("aabbWorldSize(e:)", vector_origin)
+Entity_OnlyOwnerPlayer("attachmentPos(e:n)", vector_origin)
+Entity_OnlyOwnerPlayer("attachmentPos(e:s)", vector_origin)
+Entity_OnlyOwnerPlayer("nearestPoint(e:v)", vector_origin)
+Entity_OnlyOwnerPlayer("shootPos(e:)", vector_origin) -- Technically belongs in player
 
 -- Prevent "ghost"
 Detours:CreateExpression2("noCollideAll(e:n)", function(ctx, args)
