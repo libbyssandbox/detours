@@ -1,5 +1,3 @@
-AddCSLuaFile()
-
 local Detours = libbys:FindModule("Detours")
 
 Detours:CreateExpression2("pos(e:)", function(ctx, args)
