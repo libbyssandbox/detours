@@ -10,18 +10,44 @@ do
 		self.m_Backups.m_Replacements = {}
 	end
 
+	function GetStoreKey(self, location, key)
+		return Format("%s[\"%s\"]", location, key)
+	end
+
+	function GetStorageTable(self, location, key, value)
+		return {
+			FunctionLocation = location,
+			FunctionName = key,
+			Function = value
+		}
+	end
+
+	function BackupOriginalFunction(self, location, key, value)
+		local StoreKey = self:GetStoreKey(location, key)
+
+		if not self.m_Backups.m_Originals[StoreKey] then
+			self.m_Backups.m_Originals[StoreKey] = self:GetStorageTable(location, key, value)
+		end
+	end
+
+	function StoreReplacement(self, location, key, value)
+		local StoreKey = self:GetStoreKey(location, key)
+
+		local OriginalFunction = self.m_Backups.m_Originals[StoreKey].Function
+
+		self.m_Backups.m_Replacements[StoreKey] = self:GetStorageTable(location, key, self:SetupReplacementFenv(OriginalFunction, value))
+	end
+
 	function OnConfigValueChanged(self, key, old, new)
-		if string.find(key, ".", 1, true) then
-			-- Assume it's an index
-			local _, FunctionName, FunctionLocation = string.ToIndex(key)
+		local OriginalData = self.m_Backups.m_Originals[key]
+		local ReplacementData = self.m_Backups.m_Replacements[key]
 
-			if new then
-				FunctionLocation[FunctionName] = self.m_Backups.m_Replacements[key]
+		if OriginalData and ReplacementData then
+			if key then
+				OriginalData.FunctionLocation[OriginalData.FunctionName] = ReplacementData.Function
 			else
-				FunctionLocation[FunctionName] = self.m_Backups.m_Originals[key]
+				OriginalData.FunctionLocation[OriginalData.FunctionName] = OriginalData.Function
 			end
-
-			return
 		end
 	end
 
@@ -32,6 +58,21 @@ do
 		return setfenv(replacement, Fenv)
 	end
 
+	function CreateFromKey(self, location, key, replacement)
+		local OriginalFunction = location[key]
+
+		if not isfunction(OriginalFunction) then
+			FormatError("Can't find function for detouring '%s'", self:GetStoreKey(location, key))
+		end
+
+		local StoreKey = self:GetStoreKey(location, key)
+
+		self:SetConfigValue(StoreKey, false)
+			self:BackupOriginalFunction(location, key, OriginalFunction)
+			self:StoreReplacement(location, key, replacement)
+		self:SetConfigValue(StoreKey, true)
+	end
+
 	function CreateGeneric(self, location, replacement)
 		local OriginalFunction, FunctionName, FunctionLocation = string.ToIndex(location)
 
@@ -39,33 +80,26 @@ do
 			FormatError("Can't find function for detouring '%s'", location)
 		end
 
-		if self.m_Backups.m_Originals[location] then
-			-- Use the old original
-			OriginalFunction = self.m_Backups.m_Originals[location]
-		else
-			self.m_Backups.m_Originals[location] = OriginalFunction
-		end
-
-		self.m_Backups.m_Replacements[location] = self:SetupReplacementFenv(OriginalFunction, replacement)
-
-		self:SetConfigValue(location, true)
-	end
-
-	function RestoreGeneric(self, location)
-		self:SetConfigValue(location, false)
+		self:CreateFromKey(FunctionLocation, FunctionName, replacement)
 	end
 
 	function SetAllDetours(self, status)
-		for k, _ in next, self:GetConfig() do
-			if string.find(k, ".", 1, true) then
-				self:SetConfigValue(k, status)
-			end
+		for k, _ in next, self.m_Backups.m_Originals do
+			self:SetConfigValue(k, status)
+		end
+	end
+
+	function PostGamemodeLoaded()
+		include("libbys_detours/generic.lua")
+
+		if SERVER then
+			include("libbys_detours/expression.lua")
 		end
 	end
 
 	function OnEnabled(self)
 		if not self:GetConfigValue("Loaded") then
-			include("libbys_detours/generic.lua")
+			self:AddHook("PostGamemodeLoaded", self.PostGamemodeLoaded)
 
 			self:SetConfigValue("Loaded", true)
 		else
