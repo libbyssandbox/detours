@@ -34,6 +34,7 @@ Entity_OnlyOwnerPlayer("aabbWorldSize(e:)")
 Entity_OnlyOwnerPlayer("attachmentPos(e:n)")
 Entity_OnlyOwnerPlayer("attachmentPos(e:s)")
 Entity_OnlyOwnerPlayer("nearestPoint(e:v)")
+Entity_OnlyOwnerPlayer("shootPos(e:)") -- Technically belongs in player
 
 -- Prevent "ghost"
 Detours:CreateExpression2("noCollideAll(e:n)", function(ctx, args)
