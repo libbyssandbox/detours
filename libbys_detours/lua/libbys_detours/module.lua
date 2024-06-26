@@ -106,6 +106,7 @@ do
 			include("libbys_detours/expression/bone.lua")
 			include("libbys_detours/expression/chat.lua")
 			include("libbys_detours/expression/entity.lua")
+			include("libbys_detours/expression/tool.lua")
 		end
 	end
 
