@@ -1,17 +1,9 @@
 local Detours = libbys:FindModule("Detours")
-
-local function ContextValidateBone(ctx, bone)
-	if not IsValid(bone) then
-		ctx:throw("Invalid bone!")
-		return false
-	end
-
-	return bone
-end
+local Helpers = libbys:FindModule("DetourHelpers")
 
 local function Bone_OnlyOwnerPlayer(name)
 	Detours:CreateExpression2(name, function(ctx, args)
-		local bone = ContextValidateBone(ctx, args[1])
+		local bone = Helpers:ContextValidObject(ctx, args[1], "Invalid bone!")
 		if not bone then return Vector(0, 0, 0) end
 
 		local entity = bone:GetEntity()

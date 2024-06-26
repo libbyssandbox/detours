@@ -1,17 +1,9 @@
 local Detours = libbys:FindModule("Detours")
-
-local function ContextValidateEntity(ctx, entity)
-	if not IsValid(entity) then
-		ctx:throw("Invalid entity!")
-		return false
-	end
-
-	return entity
-end
+local Helpers = libbys:FindModule("DetourHelpers")
 
 local function Entity_OnlyOwnerPlayer(name)
 	Detours:CreateExpression2(name, function(ctx, args)
-		local entity = ContextValidateEntity(ctx, args[1])
+		local entity = Helpers:ContextValidObject(ctx, args[1], "Invalid entity!")
 		if not entity then return Vector(0, 0, 0) end
 
 		if entity:IsPlayer() and entity ~= ctx.player then
@@ -45,7 +37,7 @@ Entity_OnlyOwnerPlayer("nearestPoint(e:v)")
 
 -- Prevent "ghost"
 Detours:CreateExpression2("noCollideAll(e:n)", function(ctx, args)
-	local entity = ContextValidateEntity(ctx, args[1])
+	local entity = Helpers:ContextValidObject(ctx, args[1], "Invalid entity!")
 	if not entity then return end
 
 	if entity:IsPlayer() then
