@@ -1,6 +1,6 @@
 local Detours = libbys:FindModule("Detours")
 
-local function ContextValidateEntity(entity, ctx)
+local function ContextValidateEntity(ctx, entity)
 	if not IsValid(entity) then
 		ctx:throw("Invalid entity!")
 		return false
