@@ -9,7 +9,7 @@ local function Bone_OnlyOwnerPlayer(name)
 		local entity = bone:GetEntity()
 
 		if entity:IsPlayer() and entity ~= ctx.player then
-			ctx:throw(string.format("You can't call bone:%s on other players!", name))
+			ctx:throw(Format("You can't call bone:%s on other players!", name))
 			return Vector(0, 0, 0)
 		end
 

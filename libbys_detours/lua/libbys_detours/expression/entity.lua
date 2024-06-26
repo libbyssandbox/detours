@@ -7,7 +7,7 @@ local function Entity_OnlyOwnerPlayer(name)
 		if not entity then return Vector(0, 0, 0) end
 
 		if entity:IsPlayer() and entity ~= ctx.player then
-			ctx:throw(string.format("You can't call entity:%s on other players!", name))
+			ctx:throw(Format("You can't call entity:%s on other players!", name))
 			return Vector(0, 0, 0)
 		end
 
