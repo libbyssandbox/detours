@@ -93,6 +93,16 @@ do
 		self:CreateFromKey(FunctionData, 3, replacement)
 	end
 
+	function CreateGate(self, name, replacement)
+		local FunctionData = GateActions[name]
+
+		if not istable(FunctionData) or not isfunction(FunctionData.output) then
+			FormatError("Can't find Gate function for detouring '%s'", name)
+		end
+
+		self:CreateFromKey(FunctionData, "output", replacement)
+	end
+
 	function SetAllDetours(self, status)
 		for k, _ in next, self.m_Backups.m_Originals do
 			self:SetConfigValue(k, status)
@@ -107,6 +117,8 @@ do
 			include("libbys_detours/wire/expression/chat.lua")
 			include("libbys_detours/wire/expression/entity.lua")
 			include("libbys_detours/wire/expression/tool.lua")
+
+			include("libbys_detours/wire/gates/entity.lua")
 		end
 	end
 
