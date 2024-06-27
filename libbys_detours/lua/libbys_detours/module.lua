@@ -113,12 +113,14 @@ do
 		include("libbys_detours/generic.lua")
 
 		if SERVER then
-			include("libbys_detours/wire/expression/bone.lua")
-			include("libbys_detours/wire/expression/chat.lua")
-			include("libbys_detours/wire/expression/entity.lua")
-			include("libbys_detours/wire/expression/tool.lua")
+			if istable(wire_expression2_funcs) then
+				include("libbys_detours/wire/expression/bone.lua")
+				include("libbys_detours/wire/expression/chat.lua")
+				include("libbys_detours/wire/expression/entity.lua")
+				include("libbys_detours/wire/expression/tool.lua")
 
-			include("libbys_detours/wire/gates/entity.lua")
+				include("libbys_detours/wire/gates/entity.lua")
+			end
 		end
 	end
 
