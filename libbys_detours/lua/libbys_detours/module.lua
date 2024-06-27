@@ -103,6 +103,21 @@ do
 		self:CreateFromKey(FunctionData, "output", replacement)
 	end
 
+	function CreatePacPart(self, part, name, replacement)
+		local Parts = pac.GetRegisteredParts()
+		local TargetPart = Parts[part]
+
+		if not istable(TargetPart) then
+			FormatError("Can't find Part for detouring '%s'", part)
+		end
+
+		if not isfunction(TargetPart[name]) then
+			FormatError("Can't find Part function for detouring '%s'", name)
+		end
+
+		self:CreateFromKey(TargetPart, name, replacement)
+	end
+
 	function SetAllDetours(self, status)
 		for k, _ in next, self.m_Backups.m_Originals do
 			self:SetConfigValue(k, status)
@@ -120,6 +135,14 @@ do
 				include("libbys_detours/wire/expression/tool.lua")
 
 				include("libbys_detours/wire/gates/entity.lua")
+			end
+
+			if istable(pac) then
+				AddCSLuaFile("libbys_detours/pac/entity.lua")
+			end
+		elseif CLIENT then -- elseif is not needed, it's just to help my eyes :)
+			if istable(pac) then
+				include("libbys_detours/pac/entity.lua")
 			end
 		end
 	end
