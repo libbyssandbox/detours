@@ -71,6 +71,8 @@ do
 			self:BackupOriginalFunction(location, key, OriginalFunction)
 			self:StoreReplacement(location, key, replacement)
 		self:SetConfigValue(StoreKey, true)
+
+		return StoreKey
 	end
 
 	function CreateGeneric(self, location, replacement)
@@ -80,7 +82,7 @@ do
 			FormatError("Can't find function for detouring '%s'", location)
 		end
 
-		self:CreateFromKey(FunctionLocation, FunctionName, replacement)
+		return self:CreateFromKey(FunctionLocation, FunctionName, replacement)
 	end
 
 	function CreateExpression2(self, name, replacement)
@@ -90,7 +92,7 @@ do
 			FormatError("Can't find Expression2 function for detouring '%s'", name)
 		end
 
-		self:CreateFromKey(FunctionData, 3, replacement)
+		return self:CreateFromKey(FunctionData, 3, replacement)
 	end
 
 	function CreateGate(self, name, replacement)
@@ -100,7 +102,7 @@ do
 			FormatError("Can't find Gate function for detouring '%s'", name)
 		end
 
-		self:CreateFromKey(FunctionData, "output", replacement)
+		return self:CreateFromKey(FunctionData, "output", replacement)
 	end
 
 	function CreatePacPart(self, part, name, replacement)
@@ -115,7 +117,7 @@ do
 			FormatError("Can't find Part function for detouring '%s'", name)
 		end
 
-		self:CreateFromKey(TargetPart, name, replacement)
+		return self:CreateFromKey(TargetPart, name, replacement)
 	end
 
 	function SetAllDetours(self, status)
